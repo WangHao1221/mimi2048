@@ -1,5 +1,5 @@
 <!--index.wxml-->
-<view>
+<view class='main'>
   <view class='nickname'>
     玩家：{{ userinfo.nickName }}
   </view>
@@ -8,10 +8,7 @@
   </view>   
 </view>
 <view class='container' bindtouchstart='start' bindtouchmove='move' bindtouchend='end'>
-  <label class='item d{{item}}' wx:for='{{mydata}}'>
+  <label class='item d{{item}}' wx:for='{{mydata}}' wx:key="id">
     {{ item ? item : ''}}
   </label>
 </view>
-<modal title='提示' confirm-text='确定' no-cancel hidden='{{ gameover.status }}' bind-confirm='restart'>
-  {{ gameover.message }}
-</modal>

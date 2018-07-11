@@ -6,13 +6,8 @@ const app = getApp()
 Page({
   data: {
     mydata: new Array(16),
-    slidetime: 20,
     direction: 0,
     startPos: {},
-    gameover: {
-      status: true,
-      message: 'game over'
-    },
     userinfo: {}
   },
   onLoad: function(){
@@ -34,14 +29,16 @@ Page({
       var num = Math.random()>0.5?4:2
       while (true) {
         var index = arr[Math.floor(Math.random() * arr.length)]
-        console.log(this.data.mydata[index])
-        if (this.data.mydata[index] != 0) {
+        if (index>=0 && this.data.mydata[index] != 0) {
           this.randNum();
         } else {
           break;
         }
       }
-      this.changeData(index, num)
+      //如果有可用位置
+      if(index>=0){
+        this.changeData(index, num)
+      }
   },
   changeData: function(index,num){
     var changedData = {}
@@ -52,10 +49,217 @@ Page({
   //开始滑动
   start: function(e){
     //touches数组对象获得屏幕上所有的touch，取第一个touch
-    var touch = e.touches(0)
+    var touch = e.touches[0]
     //取第一个touch的坐标值
     this.data.startPos = {x:touch.pageX,y:touch.pageY,time:new Date()}
-    this.data.direction = 0;
+    this.data.direction = 0
+  },
+  move: function(e){
+    //当屏幕有多个touch或者页面被缩放过，就不执行move操作
+    if (e.touches.length > 1 || e.scale && event.scale !== 1){
+      return
+    }
+    var time = new Date() - this.data.startPos.time
+    if (time > 25 && this.data.direction == 0){
+      var touch = e.touches[0]
+      //判断滑动方向
+      var x = touch.pageX - this.data.startPos.x
+      var y = touch.pageY - this.data.startPos.y
+      if (Math.abs(x) > Math.abs(y)) { //左右
+        if(x>0){
+          this.data.direction = 'right'
+        }else{
+          this.data.direction = 'left'
+        }
+      }else{
+        //竖直
+        if(y>0){
+          this.data.direction = 'down'
+        }else{
+          this.data.direction = 'up'
+        }
+      }
+    }
+  },
+  end: function(e){
+    var flag = this.gameOver()
+    if(flag == 1){
+      wx.showModal({
+        title: '游戏提示',
+        content: '你是个天才吗？',
+        success: function(res){
+          if (res.confirm) {
+            console.log('用户点击了确定')
+          } else {
+            console.log('用户点击了取消')
+          }
+        }
+      })
+    }else if(flag == -1){
+      wx.showModal({
+        title: '游戏提示',
+        content: '你是个傻子吗？',
+        success: function (res) {
+          if (res.confirm) {
+            this.restart()
+          } else {
+            console.log('用户点击了取消')
+          }
+        }
+      })
+    }
+    //根据方向重新设置方格
+    switch(this.data.direction){
+      case 'up':
+        this.mergeToUp()
+        break
+      case 'down':
+        this.mergeToDown()
+        break
+      case 'left':
+        this.mergeToLeft()
+        break
+      case 'right':
+        this.mergeToRight()
+        break
+      default :
+        break
+    }
+    if (this.data.direction!=0){
+      //随机位置新生成2/4
+      this.randNum()
+    }
+  },
+  gameOver: function(){
+    //格子满了
+    var temp = []
+    var max = 0
+    for (var i = 0; i < this.data.mydata.length; i++) {
+      if (this.data.mydata[i] == 0) {
+        temp.push(i)
+      }
+      if (this.data.mydata[i] > max) {
+        max = this.data.mydata[i]
+      }
+    }
+    //有一个格子为2048
+    if (max >= 2048) {
+      return 1
+    }
+    if(temp.length == 0){
+      //方格满了
+      //判断是否还可以移动
+      var up, down, left, right;
+      for (var i = 0; i < this.data.mydata.length; i++) {
+        up = i - 4
+        down = i + 4
+        left = i - 1
+        right = i + 1
+        if (up >= 0 && this.data.mydata[up] == this.data.mydata[i]) {
+          return
+        }
+        if (down < this.data.mydata.length && this.data.mydata[down] == this.data.mydata[i]) {
+          return
+        }
+        if (i % 4 != 0 && left >= 0 && this.data.mydata[left] == this.data.mydata[i]) {
+          return
+        }
+        if ((i + 1) % 4 != 0 && right < this.data.mydata.length && this.data.mydata[right] == this.data.mydata[i]) {
+          return
+        }
+      }
+      this.data.direction = 0 //不可以产生新的2/4了
+      return -1;
+    }
+  },
+  //根据方向进行合并
+  mergeToUp: function () {
+    this.mergeMove(12,8,4,0)
+    this.mergeMove(13, 9, 5, 1)
+    this.mergeMove(14, 10, 6, 2)
+    this.mergeMove(15, 11, 7, 3)
+  },
+  mergeToDown: function () { 
+    this.mergeMove(0, 4, 8, 12)
+    this.mergeMove(1, 5, 9, 13)
+    this.mergeMove(2, 6, 10, 14)
+    this.mergeMove(3, 7, 11, 15)
+  },
+  mergeToLeft: function(){
+    this.mergeMove(3, 2, 1, 0)
+    this.mergeMove(7, 6, 5, 4)
+    this.mergeMove(11, 10, 9, 8)
+    this.mergeMove(15, 14, 13, 12)
+  },
+  mergeToRight: function () {
+    this.mergeMove(0, 1, 2, 3)
+    this.mergeMove(4, 5, 6, 7)
+    this.mergeMove(8, 9, 10, 11)
+    this.mergeMove(12, 13, 14, 15)
+  },
+  mergeMove: function (d1, d2, d3, d4){
+    var arr = [d1, d2, d3, d4]
+    //计算是否合并
+    var pre, next
+    for (var i = arr.length - 1; i >= 0; i--) {
+      pre = this.data.mydata[arr[i]]
+      if (pre == 0) {
+        //如果为0，则进行下一次循环
+        continue
+      }
+      //如果不为0 
+      for (var j = i - 1; j >= 0; j--) {
+        next = this.data.mydata[arr[j]]
+        if (next == 0) {
+          continue
+        } else if (next != pre) {
+          break
+        } else {
+          this.changeData(arr[i], next * 2)
+        }
+      }
+    }
+    console.log(this.data.mydata)
+    //更改位置
+    for (var i = arr.length - 1; i >= 0; i--) {
+      pre = this.data.mydata[arr[i]]
+      if (pre == 0) {
+        for (var j = i - 1; j >= 0; j--) {
+          next = this.data.mydata[arr[j]]
+          if (next == 0) {
+            continue
+          } else {
+            this.changeData(arr[i], next)
+            this.changeData(arr[j], 0)
+            break
+          }
+        }
+      }
+    }
+    console.log('change....')
+    console.log(this.data.mydata)
+  },
+  Bindcancel: function(){
+    this.setData({
+      gameover: {
+        status: true
+      }
+    })
+  },
+  restart : function() {
+    var arr = new Array(16)
+    arr.fill(0)
+
+    this.setData({
+      mydata : arr,
+      gameover : {
+        status : true
+      }
+    })
+
+    //随机生成二个数字
+    this.randNum()
+    this.randNum()
   },
   /**
    * 用户点击右上角分享
