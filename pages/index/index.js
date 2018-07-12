@@ -240,10 +240,11 @@ Page({
           break
         } else {
           this.changeData(arr[i], next * 2)
-          this.changeData(arr[j], 0);
+          this.changeData(arr[j], 0)
           //更新分数
           this.data.score += next*2
           this.updateScore(this.data.score)
+          break //防止3个及以上相同的数字在一排，滑动会出现问题
         }
       }
     }
@@ -281,8 +282,9 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
+    var msg = '我在咪咪2048,获得了' + this.data.score +'分!赶紧来试试吧'
     return {
-      title: '咪咪2048新玩法，赶紧来试试吧',
+      title: msg,
       path: '/page/index'
     }
   }
