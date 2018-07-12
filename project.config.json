@@ -15,6 +15,7 @@
 	"appid": "wxdff88caa1f7b7816",
 	"projectname": "mimi2048",
 	"isGameTourist": false,
+  "disableScroll": true,
 	"condition": {
 		"search": {
 			"current": -1,
