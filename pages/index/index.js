@@ -15,8 +15,8 @@ Page({
   onLoad: function(){
       //获取用户信息
       this.data.userinfo = app.globalData.userInfo
-      if (wx.getStorageSync(this.data.userinfo.nickName)){
-        //
+      if (this.data.userinfo && wx.getStorageSync(this.data.userinfo.nickName)){
+        //如果获取到用户信息，则取出对应的最佳成绩
         var sessionScore = wx.getStorageSync(this.data.userinfo.nickName)
         this.setData({
           bestScore: sessionScore
