@@ -1,12 +1,12 @@
 {
-  "pages":[
+  "pages": [
     "pages/index/index"
   ],
-  "window":{
-    "backgroundTextStyle":"light",
+  "window": {
+    "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#CCC0B2",
     "navigationBarTitleText": "咪咪2048",
-    "navigationBarTextStyle":"#fff",
+    "navigationBarTextStyle": "#fff",
     "disableScroll": true
   }
 }

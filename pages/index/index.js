@@ -18,8 +18,6 @@ Page({
       if (wx.getStorageSync(this.data.userinfo.nickName)){
         //
         var sessionScore = wx.getStorageSync(this.data.userinfo.nickName)
-        console.log(sessionScore)
-        console.log('用户信息已经拿到，直接从缓存获取最佳分数...')
         this.setData({
           bestScore: sessionScore
         })
