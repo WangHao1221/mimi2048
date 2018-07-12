@@ -1,7 +1,44 @@
-.nickname{
+.nickname,.score-wrap{
+  float: left;
+  width: 35%;
+  height: 100%;
+  box-sizing: border-box;
   text-align: center;
 }
+.score-wrap{
+  width: 65%;
+  overflow: hidden;
+}
+.score,.best-score,.restart{
+  float: left;
+  width: 44%;
+  font-weight: 400;
+  color: white;
+  background-color: #CCC0B2;
+  box-sizing: border-box;
+  -webkit-box-sizing: -webkit-border-box;
+  margin-left: 6%; 
+}
+.header .score-text{
+  display: block;
+  font-weight: 800;
+}
+.restart{
+  color:white;
+  background-color: #CCC0B2;
+  width:86px;
+  height:30px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height:30px;
+  text-align:center;
+  display: flex;
+  -webkit-display:-webkit-flex;
+  left:calc(50% - 50px);
+  top:15px;
+}
 .userimg{
+  display: block;
   width: 100px;
   height: 100px;
   border-radius: 50%;

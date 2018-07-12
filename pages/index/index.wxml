@@ -1,14 +1,26 @@
 <!--index.wxml-->
 <view class='main'>
-  <view class='nickname'>
-    玩家：{{ userinfo.nickName }}
+  <view class='header'>
+    <view class='nickname' style='color: #CCC0B2;'>
+      玩家：
+      <open-data type="userNickName" lang="zh_CN"></open-data>
+      <open-data class='userimg' type="userAvatarUrl"></open-data>
+    </view>
+    <view class='score-wrap'>
+      <view class='score'>
+        <label>SCORE</label>
+        <text class='score-text'>{{score}}</text>
+      </view> 
+      <view class='best-score'>
+        <label>BEST</label>
+        <text class='score-text'>{{bestScore}}</text> 
+      </view> 
+      <button class='restart' bindtap='restart'>重新开始</button>
+    </view>
   </view>
-  <view class='nickname'>
-    <image class='userimg' src='{{ userinfo.avatarUrl }}'></image>
-  </view>   
-</view>
-<view class='container' bindtouchstart='start' bindtouchmove='move' bindtouchend='end'>
-  <label class='item d{{item}}' wx:for='{{mydata}}' wx:key="id">
-    {{ item ? item : ''}}
-  </label>
+  <view class='container' bindtouchstart='start' bindtouchmove='move' bindtouchend='end'>
+    <label class='item d{{item}}' wx:for='{{mydata}}' wx:key="id">
+      {{ item ? item : ''}}
+    </label>
+  </view>
 </view>
